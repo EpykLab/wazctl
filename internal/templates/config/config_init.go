@@ -13,7 +13,7 @@ wuiPassword: {{.WuiPassword}}
 wuiUsername: {{.WuiUsername}}`
 
 	data := configurations.WazuhCtlConfig{
-		Endpoint:    "https://your-instance:5000",
+		Endpoint:    "https://your-instance:55000",
 		WuiPassword: "password",
 		WuiUsername: "wui",
 	}

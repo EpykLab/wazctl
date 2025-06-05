@@ -3,3 +3,5 @@ fly.env
 .envrc
 cosign.pub
 cosign.key
+
+.wazctl.yaml

@@ -1,8 +1,10 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/EpykLab/wazctl/internal/files"
 	"github.com/EpykLab/wazctl/models/configurations"
@@ -10,35 +12,62 @@ import (
 )
 
 var (
-	// lists the defined locations where the config will be located by default
-	configLocs = []string{"~/.wazctl.yaml", "~/.config/wazctl.yaml", ".wazctl.yaml"}
+	// Lists the defined locations where the config will be located by default
+	configLocs = []string{
+		"./.wazctl.yaml",
+		"~/.wazctl.yaml",
+		"~/.config/wazctl.yaml",
+	}
 )
 
-func New() *configurations.WazuhCtlConfig {
-
+// New loads and returns a WazuhCtlConfig from one of the default config locations.
+// It returns an error if no valid config file is found or if parsing fails.
+func New() (*configurations.WazuhCtlConfig, error) {
 	var config configurations.WazuhCtlConfig
-	var content []byte
 
-	for _, x := range configLocs {
-		_, err := os.Stat(x)
+	// Iterate through possible config locations
+	for _, loc := range configLocs {
+		// Expand ~ to home directory
+		path, err := expandHomeDir(loc)
 		if err != nil {
+			log.Printf("Failed to expand path %s: %v", loc, err)
 			continue
-		} else {
-			content, err = files.ReadFileFromSpecifiedPath(x)
-			if err != nil {
-				log.Println("encountered error finding and opening config file ", err)
-			}
 		}
+
+		// Check if file exists
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			continue
+		}
+
+		// Read the file
+		content, err := files.ReadFileFromSpecifiedPath(path)
+		if err != nil {
+			log.Printf("Failed to read config file at %s: %v", path, err)
+			continue
+		}
+
+		// Unmarshal YAML into config (pass pointer to update struct)
+		if err := yaml.Unmarshal(content, &config); err != nil {
+			log.Printf("Failed to unmarshal config file at %s: %v", path, err)
+			continue
+		}
+
+		// Successfully loaded and parsed config
+		return &config, nil
 	}
 
-	err := yaml.Unmarshal(content, config)
+	// No valid config file was found
+	return nil, fmt.Errorf("no valid config file found in locations: %v", configLocs)
+}
+
+// expandHomeDir replaces ~ with the user's home directory in the path.
+func expandHomeDir(path string) (string, error) {
+	if path[:2] != "~/" {
+		return path, nil
+	}
+	home, err := os.UserHomeDir()
 	if err != nil {
-		log.Println(err)
+		return "", fmt.Errorf("failed to get home directory: %w", err)
 	}
-
-	return &configurations.WazuhCtlConfig{
-		Endpoint:    config.Endpoint,
-		WuiPassword: config.WuiPassword,
-		WuiUsername: config.WuiUsername,
-	}
+	return filepath.Join(home, path[2:]), nil
 }
