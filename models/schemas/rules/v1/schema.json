@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Wazuh Rule Test Schema",
+  "description": "Schema for defining Wazuh rule test cases using edge cases with executable commands",
+  "type": "object",
+  "properties": {
+    "rule_id": {
+      "type": "string",
+      "description": "Unique identifier for the Wazuh rule",
+      "minLength": 1
+    },
+    "rule_name": {
+      "type": "string",
+      "description": "Human-readable name of the rule",
+      "minLength": 1
+    },
+    "rule_author": {
+      "type": "string",
+      "description": "Author of the rule",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the rule and its purpose",
+      "minLength": 1
+    },
+    "edges": {
+      "type": "array",
+      "description": "List of edge cases to test the rule",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the edge case",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the edge case and expected behavior",
+            "minLength": 1
+          },
+          "command": {
+            "type": "object",
+            "description": "Command to execute to trigger the rule",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Type of command",
+                "enum": ["bash", "powershell"]
+              },
+              "value": {
+                "type": "string",
+                "description": "The command to execute",
+                "minLength": 1
+              }
+            },
+            "required": ["type", "value"],
+            "additionalProperties": false
+          },
+          "expected_outcome": {
+            "type": "string",
+            "description": "Expected outcome when the command is executed (e.g., rule triggered or not)",
+            "minLength": 1
+          }
+        },
+        "required": ["title", "description", "command", "expected_outcome"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["rule_id", "rule_name", "description", "edges"],
+  "additionalProperties": false
+}

@@ -1,0 +1,3 @@
+endpoint: https://your-instance:5000
+wuiPassword: password
+wuiUsername: wui

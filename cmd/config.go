@@ -22,35 +22,29 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"os"
+	"log"
 
+	"github.com/EpykLab/wazctl/internal/files"
+	"github.com/EpykLab/wazctl/internal/templates/config"
 	"github.com/spf13/cobra"
 )
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:   "wazctl",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+// configCmd represents the config command
+var configCmd = &cobra.Command{
+	Use:   "config",
+	Short: "create wazctl config file",
+	Run: func(cmd *cobra.Command, args []string) {
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
-}
+		err := files.FileCreateWithSpecifiedNameAndContent(
+			".wazctl.yaml",
+			config.ScaffoldFromTempl())
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
-		os.Exit(1)
-	}
+		if err != nil {
+			log.Println(err)
+		}
+	},
 }
 
 func init() {
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.AddCommand(configCmd)
 }

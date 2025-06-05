@@ -21,7 +21,7 @@ THE SOFTWARE.
 */
 package main
 
-import "stllr/wazctl/cmd"
+import "github.com/EpykLab/wazctl/cmd"
 
 func main() {
 	cmd.Execute()
