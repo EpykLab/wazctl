@@ -1,15 +1,26 @@
-// in setup.go
 package actions
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	api "github.com/EpykLab/wasabi"
 	"github.com/EpykLab/wazctl/config"
 )
+
+type Client interface {
+	// Agent operations
+	GetAllAgentsFromWazuhManager()
+}
+
+type WazctlClient struct {
+	Client *api.APIClient
+	Ctx    context.Context
+}
 
 // Config creates and validates the Wazuh API client configuration
 func Config() (*api.Configuration, error) {
@@ -17,6 +28,7 @@ func Config() (*api.Configuration, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to load config: %w", err)
 	}
+	log.Println(confs.SkipTlsVerify)
 
 	// Validate configuration
 	if confs.Endpoint == "" {
@@ -44,11 +56,11 @@ func Config() (*api.Configuration, error) {
 	}
 
 	cfg.UserAgent = "WazctlClient/1.0"
-	cfg.Debug = true
+	cfg.Debug = confs.HttpDebug
 	cfg.HTTPClient = &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true, // WARNING: Insecure for testing
+				InsecureSkipVerify: confs.SkipTlsVerify,
 			},
 		},
 	}
@@ -57,4 +69,27 @@ func Config() (*api.Configuration, error) {
 	log.Printf("Config: ServerURL=%s", serverURL)
 
 	return cfg, nil
+}
+
+func WazctlClientFactory() *WazctlClient {
+
+	conf, err := config.New()
+	if err != nil {
+		log.Println(err)
+	}
+
+	token := AuthWithUsernameAndPassword(*conf).JWT().String()
+
+	config, err := Config()
+	if err != nil {
+		log.Println(err)
+	}
+
+	return &WazctlClient{
+		Client: api.NewAPIClient(config),
+		Ctx: context.WithValue(context.Background(),
+			api.ContextAccessToken,
+			strings.TrimSpace(token)),
+	}
+
 }

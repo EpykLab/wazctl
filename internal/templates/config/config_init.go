@@ -12,14 +12,18 @@ func ScaffoldFromTempl() bytes.Buffer {
 port: {{.Port}}
 protocol: {{.Protocol}}
 wuiPassword: {{.WuiPassword}}
-wuiUsername: {{.WuiUsername}}`
+wuiUsername: {{.WuiUsername}}
+httpDebug: {{.HttpDebug}}
+skipTlsVerify: {{.TlsVerify}}`
 
 	data := configurations.WazuhCtlConfig{
-		Endpoint:    "your-instance.com",
-		Port:        "55000",
-		Protocol:    "https",
-		WuiPassword: "password",
-		WuiUsername: "wui",
+		Endpoint:      "your-instance.com",
+		Port:          "55000",
+		Protocol:      "https",
+		WuiPassword:   "password",
+		WuiUsername:   "wui",
+		SkipTlsVerify: true,
+		HttpDebug:     false,
 	}
 
 	var buf bytes.Buffer

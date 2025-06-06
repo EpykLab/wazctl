@@ -1,4 +1,4 @@
-package auth
+package actions
 
 import (
 	"crypto/tls"

@@ -26,7 +26,7 @@ import (
 	"log"
 
 	"github.com/EpykLab/wazctl/config"
-	"github.com/EpykLab/wazctl/pkg/actions/auth"
+	"github.com/EpykLab/wazctl/pkg/actions"
 	"github.com/spf13/cobra"
 )
 
@@ -41,7 +41,7 @@ var authCmd = &cobra.Command{
 			log.Println(err)
 		}
 
-		resp := auth.AuthWithUsernameAndPassword(*conf).JWT().String()
+		resp := actions.AuthWithUsernameAndPassword(*conf).JWT().String()
 
 		fmt.Println(resp)
 	},

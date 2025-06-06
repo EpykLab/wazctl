@@ -22,7 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"github.com/EpykLab/wazctl/pkg/actions/agents"
+	"github.com/EpykLab/wazctl/pkg/actions"
 	"github.com/spf13/cobra"
 )
 
@@ -31,7 +31,10 @@ var agentsListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "list agents enrolled in the wazuh manager",
 	Run: func(cmd *cobra.Command, args []string) {
-		agents.GetAllAgentsFromWazuhManager()
+
+		client := actions.WazctlClientFactory()
+
+		client.GetAllAgentsFromWazuhManager()
 	},
 }
 
