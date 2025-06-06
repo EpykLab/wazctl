@@ -1,3 +1,4 @@
+// in setup.go
 package actions
 
 import (
@@ -29,9 +30,19 @@ func Config() (*api.Configuration, error) {
 	}
 
 	cfg := api.NewConfiguration()
-	cfg.Host = confs.Endpoint
-	cfg.Scheme = confs.Protocol
-	cfg.Servers[0].Variables["port"] = api.ServerVariable{DefaultValue: confs.Port}
+
+	// ✅ **THE FIX IS HERE** ✅
+	// Instead of setting Host, Scheme, and Port variables separately,
+	// we construct the full server URL directly. This ensures the
+	// Host header includes the port.
+	serverURL := fmt.Sprintf("%s://%s:%s", confs.Protocol, confs.Endpoint, confs.Port)
+	cfg.Servers = api.ServerConfigurations{
+		{
+			URL:         serverURL,
+			Description: "Wazuh API Server",
+		},
+	}
+
 	cfg.UserAgent = "WazctlClient/1.0"
 	cfg.Debug = true
 	cfg.HTTPClient = &http.Client{
@@ -43,7 +54,7 @@ func Config() (*api.Configuration, error) {
 	}
 
 	// Log configuration
-	log.Printf("Config: Host=%s, Scheme=%s, Port=%s", cfg.Host, cfg.Scheme, confs.Port)
+	log.Printf("Config: ServerURL=%s", serverURL)
 
 	return cfg, nil
 }
