@@ -22,31 +22,19 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-	"log"
-
-	"github.com/EpykLab/wazctl/config"
-	"github.com/EpykLab/wazctl/pkg/actions/auth"
+	"github.com/EpykLab/wazctl/pkg/actions/agents"
 	"github.com/spf13/cobra"
 )
 
-// authCmd represents the auth command
-var authCmd = &cobra.Command{
-	Use:   "auth",
-	Short: "test the ability of wazctl to authenticate again the specified wazuh endpoint",
+// agentsListCmd represents the list command
+var agentsListCmd = &cobra.Command{
+	Use:   "list",
+	Short: "list agents enrolled in the wazuh manager",
 	Run: func(cmd *cobra.Command, args []string) {
-
-		conf, err := config.New()
-		if err != nil {
-			log.Println(err)
-		}
-
-		resp := auth.AuthWithUsernameAndPassword(*conf).JWT().String()
-
-		fmt.Println(resp)
+		agents.GetAllAgentsFromWazuhManager()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(authCmd)
+	rootCmd.AddCommand(agentsListCmd)
 }

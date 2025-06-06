@@ -16,9 +16,11 @@ func TestNew(t *testing.T) {
 		{
 			name: "get proper config",
 			want: &configurations.WazuhCtlConfig{
-				Endpoint:    "https://your-instance:55000",
-				WuiPassword: "password",
-				WuiUsername: "wui",
+				Endpoint:    "10.77.60.11",
+				Port:        "55000",
+				Protocol:    "https",
+				WuiPassword: "wazuh-wui",
+				WuiUsername: "wazuh-wui",
 			},
 			wantErr: false,
 		},

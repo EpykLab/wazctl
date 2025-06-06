@@ -9,11 +9,15 @@ import (
 func ScaffoldFromTempl() bytes.Buffer {
 
 	tmpl := `endpoint: {{.Endpoint}}
+port: {{.Port}}
+protocol: {{.Protocol}}
 wuiPassword: {{.WuiPassword}}
 wuiUsername: {{.WuiUsername}}`
 
 	data := configurations.WazuhCtlConfig{
-		Endpoint:    "https://your-instance:55000",
+		Endpoint:    "your-instance.com",
+		Port:        "55000",
+		Protocol:    "https",
 		WuiPassword: "password",
 		WuiUsername: "wui",
 	}
