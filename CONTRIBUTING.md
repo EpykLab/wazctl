@@ -13,6 +13,14 @@ changes, and helping you finalize your pull requests.
 
 There are many ways to contribute, and all of them are valuable.
 
+### ❤️ Sponsoring
+
+If you rely on this project, please consider sponsoring its development. It
+helps us dedicate more time to maintenance and new features. You can sponsor
+the project through [GitHub
+Sponsors](https://github.com/sponsors/YOUR_USERNAME). Any amount is greatly
+appreciated!
+
 ### 🐛 Reporting Bugs
 
 If you find a bug, please make sure it hasn't already been reported by

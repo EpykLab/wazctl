@@ -22,29 +22,26 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"os"
+	"log"
 
+	"github.com/EpykLab/wazctl/internal/instance/local/docker"
 	"github.com/spf13/cobra"
 )
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:   "wazctl",
-	Short: "cli control for wazuh instances",
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+// dockerCmd represents the docker command
+var dockerCmd = &cobra.Command{
+	Use:   "docker",
+	Short: "create a local wazuh instance in docker",
+	Long:  ``,
+	Run: func(cmd *cobra.Command, args []string) {
+		instance, err := docker.NewWazuhDockerManager()
+		if err != nil {
+			log.Println(err)
+		}
+
+		instance.Start()
+
+	},
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
-		os.Exit(1)
-	}
-}
-
-func init() {
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
+func init() {}

@@ -38,6 +38,4 @@ var agentsListCmd = &cobra.Command{
 	},
 }
 
-func init() {
-	rootCmd.AddCommand(agentsListCmd)
-}
+func init() {}
