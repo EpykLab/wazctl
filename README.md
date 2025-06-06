@@ -11,6 +11,9 @@
 
 `wazctl` is a powerful, intuitive command-line interface (CLI) designed to streamline your interactions with the Wazuh Security Platform. Whether you're managing agents, testing new rules, or automating security tasks, `wazctl` is the tool you need to get the job done efficiently.
 
+wazclt in built using [wasabi](https://github.com/EpykLab/wasabi), our wazuh api sdk, auto generated from wazuh openapi specification.
+
+
 ## ✨ Intended Functionality
 
 The vision for `wazctl` is to provide a comprehensive toolkit for Wazuh administrators and security engineers.
