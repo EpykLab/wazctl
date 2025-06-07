@@ -34,14 +34,34 @@ var dockerCmd = &cobra.Command{
 	Short: "create a local wazuh instance in docker",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
+		start := cmd.Flag("start").Changed
+		stop := cmd.Flag("stop").Changed
+		clean := cmd.Flag("clean").Changed
 		instance, err := docker.NewWazuhDockerManager()
 		if err != nil {
 			log.Println(err)
 		}
 
-		instance.Start()
-
+		if start {
+			if err := instance.Start(); err != nil {
+				log.Println(err)
+			}
+		}
+		if stop {
+			if err := instance.Stop(); err != nil {
+				log.Println(err)
+			}
+		}
+		if clean {
+			if err := instance.Clean(); err != nil {
+				log.Println(err)
+			}
+		}
 	},
 }
 
-func init() {}
+func init() {
+	dockerCmd.Flags().Bool("start", false, "spin up wazuh instance")
+	dockerCmd.Flags().Bool("stop", false, "stop wazuh instance")
+	dockerCmd.Flags().Bool("clean", false, "remove wazuh instance")
+}

@@ -15,6 +15,10 @@ import (
 type Client interface {
 	// Agent operations
 	GetAllAgentsFromWazuhManager()
+
+	// User operations
+	CreateNewUserInWazuh()
+	GetUsersInWazuh()
 }
 
 type WazctlClient struct {
@@ -28,7 +32,6 @@ func Config() (*api.Configuration, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to load config: %w", err)
 	}
-	log.Println(confs.SkipTlsVerify)
 
 	// Validate configuration
 	if confs.Endpoint == "" {

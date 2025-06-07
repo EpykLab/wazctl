@@ -22,6 +22,9 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"log"
+
+	"github.com/EpykLab/wazctl/internal/printers"
 	"github.com/EpykLab/wazctl/pkg/actions"
 	"github.com/spf13/cobra"
 )
@@ -34,7 +37,12 @@ var agentsListCmd = &cobra.Command{
 
 		client := actions.WazctlClientFactory()
 
-		client.GetAllAgentsFromWazuhManager()
+		data, err := client.GetAllAgentsFromWazuhManager()
+		if err != nil {
+			log.Println(err)
+		}
+
+		printers.PrintJsonFormatted(data)
 	},
 }
 

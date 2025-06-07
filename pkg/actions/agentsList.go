@@ -2,14 +2,13 @@ package actions
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 )
 
-func (ctl *WazctlClient) GetAllAgentsFromWazuhManager() {
+func (ctl *WazctlClient) GetAllAgentsFromWazuhManager() ([]byte, error) {
 
-	_, httpResp, err := ctl.Client.AgentsAPI.ApiControllersAgentControllerGetAgents(ctl.Ctx).
+	resp, httpResp, err := ctl.Client.AgentsAPI.ApiControllersAgentControllerGetAgents(ctl.Ctx).
 		Pretty(true).
 		Execute()
 	if err != nil {
@@ -22,8 +21,10 @@ func (ctl *WazctlClient) GetAllAgentsFromWazuhManager() {
 
 			}
 			httpResp.Body.Close()
-			fmt.Sprint(wazuhErr)
 		}
 		log.Fatalf("Get agents failed: %v", err)
 	}
+
+	return resp.Data.MarshalJSON()
+
 }

@@ -2,7 +2,6 @@ package docker
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -106,7 +105,6 @@ func (m *WazuhDockerManager) Start() error {
 	fmt.Println("🚀 Starting Wazuh Docker stack...")
 	cmd := exec.Command("/bin/bash", "-c", "docker compose up -d")
 	cmd.Dir = m.SingleNodeDir
-	log.Println(m.SingleNodeDir)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
@@ -160,7 +158,7 @@ func (m *WazuhDockerManager) Stop() error {
 	}
 
 	fmt.Println("🛑 Stopping Wazuh Docker stack...")
-	cmd := exec.Command("docker-compose", "down")
+	cmd := exec.Command("/bin/bash", "-c", "docker compose down")
 	cmd.Dir = m.SingleNodeDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -181,7 +179,7 @@ func (m *WazuhDockerManager) Clean() error {
 
 	// Remove volumes
 	fmt.Println("🧹 Removing Wazuh Docker volumes...")
-	cmd := exec.Command("docker-compose", "down", "-v")
+	cmd := exec.Command("/bin/bash", "-c", "docker compose down -v")
 	cmd.Dir = m.SingleNodeDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -196,48 +194,4 @@ func (m *WazuhDockerManager) Clean() error {
 
 	fmt.Println("✅ Cleaned up Wazuh Docker deployment.")
 	return nil
-}
-
-func main() {
-	manager, err := NewWazuhDockerManager()
-	if err != nil {
-		fmt.Printf("Error: %v\n", err)
-		os.Exit(1)
-	}
-
-	if len(os.Args) < 2 {
-		fmt.Println("Usage: wazuh_docker <command>")
-		fmt.Println("Commands:")
-		fmt.Println("  start    - Start the Wazuh Docker stack")
-		fmt.Println("  stop     - Stop the Wazuh Docker stack")
-		fmt.Println("  clean    - Stop and remove all Wazuh Docker data")
-		os.Exit(1)
-	}
-
-	command := os.Args[1]
-	switch command {
-	case "start":
-		if err := manager.Start(); err != nil {
-			fmt.Printf("Error: %v\n", err)
-			os.Exit(1)
-		}
-	case "stop":
-		if err := manager.Stop(); err != nil {
-			fmt.Printf("Error: %v\n", err)
-			os.Exit(1)
-		}
-	case "clean":
-		if err := manager.Clean(); err != nil {
-			fmt.Printf("Error: %v\n", err)
-			os.Exit(1)
-		}
-	default:
-		fmt.Printf("Unknown command: %s\n", command)
-		fmt.Println("Usage: wazuh_docker <command>")
-		fmt.Println("Commands:")
-		fmt.Println("  start    - Start the Wazuh Docker stack")
-		fmt.Println("  stop     - Stop the Wazuh Docker stack")
-		fmt.Println("  clean    - Stop and remove all Wazuh Docker data")
-		os.Exit(1)
-	}
 }
