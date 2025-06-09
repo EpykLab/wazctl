@@ -22,31 +22,17 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"github.com/EpykLab/wazctl/internal/printers"
-	"github.com/EpykLab/wazctl/pkg/actions"
 	"github.com/spf13/cobra"
 )
 
-// useraddCmd represents the useradd command
-var useraddCmd = &cobra.Command{
-	Use:   "add",
-	Short: "Create a new user in wazuh",
-	Run: func(cmd *cobra.Command, args []string) {
-		username := cmd.Flag("username").Value.String()
-		password := cmd.Flag("password").Value.String()
-
-		client := actions.WazctlClientFactory()
-		printers.PrintJsonFormattedOrError(client.CreateNewUserInWazuhManager(&actions.CreateNewUserInWazuhManagerOptions{
-			Username: username,
-			Password: password,
-		}))
-	},
+// userCmd represents the user command
+var userCmd = &cobra.Command{
+	Use:   "user",
+	Short: "interact with users within the wazuh instance",
 }
 
 func init() {
-	useraddCmd.Flags().StringP("username", "u", "", "username of new user to create in wazuh")
-	useraddCmd.Flags().StringP("password", "p", "", "password of new user to create in wazuh")
+	rootCmd.AddCommand(userCmd)
 
-	useraddCmd.MarkFlagRequired("username")
-	useraddCmd.MarkFlagRequired("password")
+	userCmd.AddCommand(useraddCmd)
 }
