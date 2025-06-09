@@ -1,5 +1,5 @@
 /*
-Copyright © 2025 stllr
+Copyright © 2025 EpykLab
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,16 +27,28 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// agentsListCmd represents the list command
-var agentsListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "list agents enrolled in the wazuh manager",
+// useraddCmd represents the useradd command
+var useraddCmd = &cobra.Command{
+	Use:   "useradd",
+	Short: "Create a new user in wazuh",
 	Run: func(cmd *cobra.Command, args []string) {
+		username := cmd.Flag("username").Value.String()
+		password := cmd.Flag("password").Value.String()
 
 		client := actions.WazctlClientFactory()
-
-		printers.PrintJsonFormattedOrError(client.GetAllAgentsFromWazuhManager())
+		printers.PrintJsonFormattedOrError(client.CreateNewUserInWazuhManager(&actions.CreateNewUserInWazuhManagerOptions{
+			Username: username,
+			Password: password,
+		}))
 	},
 }
 
-func init() {}
+func init() {
+	apiCmd.AddCommand(useraddCmd)
+
+	useraddCmd.Flags().StringP("username", "u", "", "username of new user to create in wazuh")
+	useraddCmd.Flags().StringP("password", "p", "", "password of new user to create in wazuh")
+
+	useraddCmd.MarkFlagRequired("username")
+	useraddCmd.MarkFlagRequired("password")
+}
