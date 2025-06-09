@@ -6,11 +6,20 @@ import (
 	"text/template"
 )
 
+const exampleRule = `<rule id="100234" level="3">
+    <if_sid>230</if_sid>
+    <field name="alert_type">normal</field>
+    <description>The file limit set for this agent is $(file_limit). Now, $(file_count) files are being monitored.</description>
+   <group>syscheck,fim_db_state,</group>
+ </rule>`
+
 func ScaffoldFromTempl() bytes.Buffer {
 
 	tmpl := `ruleId: {{.RuleId}}
 ruleName: {{.RuleName}}
 ruleAuthor: {{.RuleAuthor}}
+ruleContent: |-
+ {{.RuleContent}}
 description: {{.Description}}
 edges:
 {{- range .Edges}}
@@ -27,6 +36,7 @@ edges:
 		RuleId:      "rule_001",
 		RuleName:    "Unauthorized Access",
 		RuleAuthor:  "John Doe",
+		RuleContent: exampleRule,
 		Description: "Tests unauthorized access attempts",
 		Edges: []v1.SchemaJsonEdgesElem{
 			{

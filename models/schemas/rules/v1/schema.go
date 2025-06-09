@@ -21,6 +21,9 @@ type SchemaJson struct {
 
 	// Human-readable name of the rule
 	RuleName string `json:"rule_name" yaml:"ruleName" mapstructure:"ruleName"`
+
+	// XML Rule content
+	RuleContent string `json:"rule_content" yaml:"ruleContent" mapstructure:"ruleName"`
 }
 
 type SchemaJsonEdgesElem struct {
