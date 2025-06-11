@@ -7,28 +7,48 @@ import (
 )
 
 func ScaffoldFromTempl() bytes.Buffer {
-
-	tmpl := `endpoint: {{.Endpoint}}
-port: {{.Port}}
-protocol: {{.Protocol}}
-wuiPassword: {{.WuiPassword}}
-wuiUsername: {{.WuiUsername}}
-httpDebug: {{.HttpDebug}}
-skipTlsVerify: {{.TlsVerify}}`
+	tmpl := `wazuh:
+    endpoint: {{.WazuhInstanceConfigurations.Endpoint}}
+    port: {{.WazuhInstanceConfigurations.Port}}
+    protocol: {{.WazuhInstanceConfigurations.Protocol}}
+    wuiPassword: {{.WazuhInstanceConfigurations.WuiPassword}}
+    wuiUsername: {{.WazuhInstanceConfigurations.WuiUsername}}
+    httpDebug: {{.WazuhInstanceConfigurations.HttpDebug}}
+    skipTlsVerify: {{.WazuhInstanceConfigurations.SkipTlsVerify}}
+indexer:
+    endpoint: {{.IndexerInstanceConfiguration.Endpoint}}
+    port: {{.IndexerInstanceConfiguration.Port}}
+    protocol: {{.IndexerInstanceConfiguration.Protocol}}
+    indexerPassword: {{.IndexerInstanceConfiguration.IndexerPassword}}
+    indexerUsername: {{.IndexerInstanceConfiguration.IndexerUsername}}
+    httpDebug: {{.IndexerInstanceConfiguration.HttpDebug}}
+    skipTlsVerify: {{.IndexerInstanceConfiguration.SkipTlsVerify}}
+`
 
 	data := configurations.WazuhCtlConfig{
-		Endpoint:      "your-instance.com",
-		Port:          "55000",
-		Protocol:      "https",
-		WuiPassword:   "password",
-		WuiUsername:   "wui",
-		SkipTlsVerify: true,
-		HttpDebug:     false,
+		WazuhInstanceConfigurations: configurations.WazuhInstanceConfigurations{
+			Endpoint:      "your-instance.com",
+			Port:          "55000",
+			Protocol:      "https",
+			WuiPassword:   "password",
+			WuiUsername:   "wui",
+			SkipTlsVerify: true,
+			HttpDebug:     false,
+		},
+		IndexerInstanceConfiguration: configurations.IndexerInstanceConfiguration{
+			Endpoint:        "your-instance.com",
+			Port:            "9200",
+			Protocol:        "https",
+			IndexerPassword: "password",
+			IndexerUsername: "wui",
+			SkipTlsVerify:   true,
+			HttpDebug:       false,
+		},
 	}
 
 	var buf bytes.Buffer
 
-	t := template.Must(template.New("ruleTest").Parse(tmpl))
+	t := template.Must(template.New("wazuhConfig").Parse(tmpl))
 	t.Execute(&buf, data)
 
 	return buf

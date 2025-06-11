@@ -27,9 +27,9 @@ func AuthWithUsernameAndPassword(config configurations.WazuhCtlConfig) *Auth {
 
 	// Create the request
 	url := fmt.Sprintf("%s://%s:%s/security/user/authenticate",
-		config.Protocol,
-		config.Endpoint,
-		config.Port)
+		config.WazuhInstanceConfigurations.Protocol,
+		config.WazuhInstanceConfigurations.Endpoint,
+		config.WazuhInstanceConfigurations.Port)
 
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {

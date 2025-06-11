@@ -12,7 +12,7 @@ import (
 	"github.com/EpykLab/wazctl/config"
 )
 
-type Client interface {
+type WazuhClientMethods interface {
 	// Agent operations
 	GetAllAgentsFromWazuhManager()
 
@@ -26,21 +26,21 @@ type WazctlClient struct {
 	Ctx    context.Context
 }
 
-// Config creates and validates the Wazuh API client configuration
-func Config() (*api.Configuration, error) {
+// WazuhConfig creates and validates the Wazuh API client configuration
+func WazuhConfig() (*api.Configuration, error) {
 	confs, err := config.New()
 	if err != nil {
 		return nil, fmt.Errorf("failed to load config: %w", err)
 	}
 
 	// Validate configuration
-	if confs.Endpoint == "" {
+	if confs.WazuhInstanceConfigurations.Endpoint == "" {
 		return nil, fmt.Errorf("endpoint is empty")
 	}
-	if confs.Protocol != "http" && confs.Protocol != "https" {
-		return nil, fmt.Errorf("invalid protocol: %s", confs.Protocol)
+	if confs.WazuhInstanceConfigurations.Protocol != "http" && confs.WazuhInstanceConfigurations.Protocol != "https" {
+		return nil, fmt.Errorf("invalid protocol: %s", confs.WazuhInstanceConfigurations.Protocol)
 	}
-	if confs.Port == "" {
+	if confs.WazuhInstanceConfigurations.Port == "" {
 		return nil, fmt.Errorf("port is empty")
 	}
 
@@ -50,7 +50,9 @@ func Config() (*api.Configuration, error) {
 	// Instead of setting Host, Scheme, and Port variables separately,
 	// we construct the full server URL directly. This ensures the
 	// Host header includes the port.
-	serverURL := fmt.Sprintf("%s://%s:%s", confs.Protocol, confs.Endpoint, confs.Port)
+	serverURL := fmt.Sprintf("%s://%s:%s", confs.WazuhInstanceConfigurations.Protocol,
+		confs.WazuhInstanceConfigurations.Endpoint,
+		confs.WazuhInstanceConfigurations.Port)
 	cfg.Servers = api.ServerConfigurations{
 		{
 			URL:         serverURL,
@@ -59,11 +61,11 @@ func Config() (*api.Configuration, error) {
 	}
 
 	cfg.UserAgent = "WazctlClient/1.0"
-	cfg.Debug = confs.HttpDebug
+	cfg.Debug = confs.WazuhInstanceConfigurations.HttpDebug
 	cfg.HTTPClient = &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: confs.SkipTlsVerify,
+				InsecureSkipVerify: confs.WazuhInstanceConfigurations.SkipTlsVerify,
 			},
 		},
 	}
@@ -83,7 +85,7 @@ func WazctlClientFactory() *WazctlClient {
 
 	token := AuthWithUsernameAndPassword(*conf).JWT().String()
 
-	config, err := Config()
+	config, err := WazuhConfig()
 	if err != nil {
 		log.Println(err)
 	}

@@ -14,7 +14,7 @@ import (
 var (
 	// Lists the defined locations where the config will be located by default
 	configLocs = []string{
-		"./.wazctl.yaml",
+		".wazctl.yaml",
 		"~/.wazctl.yaml",
 		"~/.config/wazctl.yaml",
 	}

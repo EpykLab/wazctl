@@ -12,6 +12,7 @@ func PrintJsonFormattedOrError(data []byte, wazctlErr error) {
 
 	if wazctlErr != nil {
 		// TODO: Logic for parsing error better, for now defaulting to standard
+		// could use a context, or channel maybe?
 		log.Println(wazctlErr)
 	} else {
 		var out bytes.Buffer

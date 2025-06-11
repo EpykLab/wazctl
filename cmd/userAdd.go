@@ -36,7 +36,7 @@ var useraddCmd = &cobra.Command{
 		password := cmd.Flag("password").Value.String()
 
 		client := actions.WazctlClientFactory()
-		printers.PrintJsonFormattedOrError(client.CreateNewUserInWazuhManager(&actions.CreateNewUserInWazuhManagerOptions{
+		printers.PrintJsonFormattedOrError(client.CreateNewUserInWazuhManager(&actions.CreateNewWazuhUserOptions{
 			Username: username,
 			Password: password,
 		}))
