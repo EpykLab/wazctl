@@ -132,7 +132,7 @@ func (m *WazuhDockerManager) waitForDashboard() error {
 	containerName := "single-node-wazuh.dashboard-1"
 
 	for time.Since(start) < timeout {
-		cmd := exec.Command("docker", "logs", containerName)
+		cmd := exec.Command("/bin/bash", "-c", fmt.Sprintf("docker logs %s", containerName))
 		output, err := cmd.CombinedOutput()
 		if err != nil {
 			// Container might not be up yet, wait and retry
@@ -141,9 +141,11 @@ func (m *WazuhDockerManager) waitForDashboard() error {
 		}
 
 		logs := string(output)
-		if strings.Contains(logs, "Wazuh dashboard server is ready") {
+		// Check for the actual ready indicator in Wazuh dashboard logs
+		if strings.Contains(logs, "http server running at https://0.0.0.0:5601") {
 			return nil
 		}
+
 		time.Sleep(5 * time.Second)
 	}
 
