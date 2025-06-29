@@ -58,13 +58,13 @@ func (ctl *IndexerClient) CreateNewUserInOSIndexer(opts *CreateNewIndexerUserOpt
 	}
 
 	uri := fmt.Sprintf("%s/%s/%s",
-		ctl.osConfig.Address,
+		ctl.oSConfig.Address,
 		opensearch.CreateNewIdexerUserURI,
 		opts.Users[0])
 
-	request, err := ctl.osConfig.IndexerApiRequest(userPayload, uri, http.MethodPut)
+	request, err := ctl.oSConfig.IndexerApiRequest(userPayload, uri, http.MethodPut)
 
-	resp, err := ctl.client.Do(request)
+	resp, err := ctl.oSConfig.Client.Do(request)
 	if err != nil {
 		return nil, err
 	}

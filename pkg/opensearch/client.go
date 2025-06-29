@@ -2,6 +2,7 @@ package opensearch
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -12,10 +13,10 @@ import (
 )
 
 type IndexerClientConfig struct {
-	SkipTLSVerify bool
-	Address       string
-	Username      string
-	Password      string
+	Address  string
+	Username string
+	Password string
+	Client   *http.Client
 	// TODO: added in field for http debug
 }
 
@@ -31,7 +32,14 @@ func NewClientConfig() *IndexerClientConfig {
 	}
 
 	return &IndexerClientConfig{
-		SkipTLSVerify: confs.IndexerInstanceConfiguration.SkipTlsVerify,
+		Client: &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: confs.IndexerInstanceConfiguration.
+						SkipTlsVerify,
+				},
+			},
+		},
 		Address: fmt.Sprintf("%s://%s:%s",
 			confs.IndexerInstanceConfiguration.Protocol,
 			confs.IndexerInstanceConfiguration.Endpoint,
@@ -63,4 +71,3 @@ func (c *IndexerClientConfig) IndexerApiRequest(payload any, uri string, method 
 
 	return request, nil
 }
-
