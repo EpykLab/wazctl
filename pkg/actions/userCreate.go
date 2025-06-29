@@ -1,13 +1,12 @@
 package actions
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 
 	wasabi "github.com/EpykLab/wasabi"
+	"github.com/EpykLab/wazctl/pkg/opensearch"
 )
 
 type CreateNewWazuhUserOptions struct {
@@ -41,7 +40,7 @@ func (ctl *WazctlClient) CreateNewUserInWazuhManager(opts *CreateNewWazuhUserOpt
 		ApiControllersSecurityControllerCreateUserRequest(*newUser).
 		Execute()
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Error when calling `SecurityAPI.ApiControllersSecurityControllerCreateUser``: %v\n", err))
+		return nil, fmt.Errorf(fmt.Sprintf("Error when calling `SecurityAPI.ApiControllersSecurityControllerCreateUser``: %v\n", err))
 	}
 
 	return resp.MarshalJSON()
@@ -49,22 +48,27 @@ func (ctl *WazctlClient) CreateNewUserInWazuhManager(opts *CreateNewWazuhUserOpt
 
 func (ctl *IndexerClient) CreateNewUserInOSIndexer(opts *CreateNewIndexerUserOptions) ([]byte, error) {
 
-	// TODO: create query for new users
-	query := strings.NewReader(`{}`)
+	userPayload := opensearch.NewUserPayload{
+		Attributes: struct {
+			Attribute1 string "json:\"attribute1,omitzero\""
+			Attribute2 string "json:\"attribute2,omitzero\""
+		}{},
+		BackendRoles: opts.BackendRoles,
+		Password:     opts.Password,
+	}
 
-	createUserRequest, err := http.NewRequest(http.MethodPost, "", query)
+	uri := fmt.Sprintf("%s/%s/%s",
+		ctl.osConfig.Address,
+		opensearch.CreateNewIdexerUserURI,
+		opts.Users[0])
+
+	request, err := ctl.osConfig.IndexerApiRequest(userPayload, uri, http.MethodPut)
+
+	resp, err := ctl.client.Do(request)
 	if err != nil {
 		return nil, err
 	}
-
-	createUserRequest.Header["Content-Type"] = []string{"application/json"}
-
-	resp, err := ctl.Client.Client.Perform(createUserRequest)
-	if err != nil {
-		return nil, err
-	}
+	defer resp.Body.Close()
 
 	return io.ReadAll(resp.Body)
 }
-
-// TODO: Create ability to map roles in wazuh

@@ -96,5 +96,4 @@ func WazctlClientFactory() *WazctlClient {
 			api.ContextAccessToken,
 			strings.TrimSpace(token)),
 	}
-
 }

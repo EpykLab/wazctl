@@ -21,6 +21,6 @@ type IndexerInstanceConfiguration struct {
 	Port            string `json:"port,omitempty" yaml:"port"`
 	SkipTlsVerify   bool   `json:"skip_tls_verify,omitempty" yaml:"skipTlsVerify"`
 	HttpDebug       bool   `json:"http_debug,omitempty" yaml:"httpDebug"`
-	IndexerPassword string `json:"wui_password,omitempty" yaml:"IndexerPassword"`
-	IndexerUsername string `json:"wui_username,omitempty" yaml:"IndexerUsername"`
+	IndexerPassword string `json:"wui_password,omitempty" yaml:"indexerPassword"`
+	IndexerUsername string `json:"wui_username,omitempty" yaml:"indexerUsername"`
 }
