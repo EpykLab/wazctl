@@ -1,0 +1,42 @@
+# .goreleaser.yml
+
+builds:
+  - id: "linux-build"
+    dir: "."
+    goos:
+      - linux
+    goarch:
+      - amd64
+    ldflags:
+      - -s -w
+      - -X github.com/EpykLab/wazctl/cmd.version={{ .Tag }}
+    env:
+      - CGO_ENABLED=0
+  - id: "macos-build"
+    dir: "."
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/EpykLab/wazctl/cmd.version={{ .Tag }}
+    env:
+      - CGO_ENABLED=0
+release:
+  # contain special words like alpha, beta, or rc
+  prerelease: auto
+  extra_files:
+    - glob: ./cosign.pub
+signs:
+  - cmd: cosign
+    stdin: "{{ .Env.COSIGN_PWD }}"
+    args:
+      - "sign-blob"
+      - "--key=cosign.key"
+      - "--output-signature=${signature}"
+      - "${artifact}"
+      - "--yes" # needed on cosign 2.0.0+
+    artifacts: all
+# .goreleaser.yaml
