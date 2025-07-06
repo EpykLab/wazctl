@@ -26,7 +26,8 @@ func NewWazuhDockerManager() (*WazuhDockerManager, error) {
 	}
 	workDir := filepath.Join(home, ".wazuh-docker")
 	return &WazuhDockerManager{
-		RepoURL:       "https://github.com/wazuh/wazuh-docker.git",
+		RepoURL: "https://github.com/wazuh/wazuh-docker.git",
+		// TODO: this should be configurable in the conf file
 		RepoVersion:   "v4.12.0",
 		WorkDir:       workDir,
 		SingleNodeDir: filepath.Join(workDir, "single-node"),

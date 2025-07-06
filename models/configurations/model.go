@@ -3,6 +3,7 @@ package configurations
 type WazuhCtlConfig struct {
 	WazuhInstanceConfigurations  `json:"wazuh_instance_configurations" yaml:"wazuh"`
 	IndexerInstanceConfiguration `json:"indexer_instance_configuration" yaml:"indexer"`
+	LocalInstanceConfiguration   `json:"local_instance_configuration" yaml:"local"`
 }
 
 type WazuhInstanceConfigurations struct {
@@ -23,4 +24,8 @@ type IndexerInstanceConfiguration struct {
 	HttpDebug       bool   `json:"http_debug,omitempty" yaml:"httpDebug"`
 	IndexerPassword string `json:"wui_password,omitempty" yaml:"indexerPassword"`
 	IndexerUsername string `json:"wui_username,omitempty" yaml:"indexerUsername"`
+}
+
+type LocalInstanceConfiguration struct {
+	RepoVersion string `json:"repo_version,omitempty" yaml:"repoVersion"`
 }

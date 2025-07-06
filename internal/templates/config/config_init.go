@@ -23,6 +23,8 @@ indexer:
     indexerUsername: {{.IndexerInstanceConfiguration.IndexerUsername}}
     httpDebug: {{.IndexerInstanceConfiguration.HttpDebug}}
     skipTlsVerify: {{.IndexerInstanceConfiguration.SkipTlsVerify}}
+local:
+    repoVersion: {{.LocalInstanceConfiguration.RepoVersion}}
 `
 
 	data := configurations.WazuhCtlConfig{
@@ -43,6 +45,9 @@ indexer:
 			IndexerUsername: "wui",
 			SkipTlsVerify:   true,
 			HttpDebug:       false,
+		},
+		LocalInstanceConfiguration: configurations.LocalInstanceConfiguration{
+			RepoVersion: "4.12.0",
 		},
 	}
 
