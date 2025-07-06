@@ -24,7 +24,7 @@ indexer:
     httpDebug: {{.IndexerInstanceConfiguration.HttpDebug}}
     skipTlsVerify: {{.IndexerInstanceConfiguration.SkipTlsVerify}}
 local:
-    repoVersion: {{.LocalInstanceConfiguration.RepoVersion}}
+    repoVersion: {{.LocalInstanceConfiguration.RepoVersion}} # be sure to include prepended 'v' to whatever version you choose to set
 `
 
 	data := configurations.WazuhCtlConfig{
@@ -47,7 +47,7 @@ local:
 			HttpDebug:       false,
 		},
 		LocalInstanceConfiguration: configurations.LocalInstanceConfiguration{
-			RepoVersion: "4.12.0",
+			RepoVersion: "v4.12.0",
 		},
 	}
 

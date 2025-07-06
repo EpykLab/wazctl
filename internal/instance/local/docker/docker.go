@@ -2,11 +2,14 @@ package docker
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/EpykLab/wazctl/config"
 )
 
 // WazuhDockerManager manages the Wazuh Docker deployment.
@@ -20,6 +23,11 @@ type WazuhDockerManager struct {
 // NewWazuhDockerManager initializes a new WazuhDockerManager.
 func NewWazuhDockerManager() (*WazuhDockerManager, error) {
 	// Use a directory in the user's home for persistence
+	conf, err := config.New()
+	if err != nil {
+		log.Fatal("Error processing config file", err)
+	}
+
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return nil, fmt.Errorf("could not get user home directory: %w", err)
@@ -28,7 +36,7 @@ func NewWazuhDockerManager() (*WazuhDockerManager, error) {
 	return &WazuhDockerManager{
 		RepoURL: "https://github.com/wazuh/wazuh-docker.git",
 		// TODO: this should be configurable in the conf file
-		RepoVersion:   "v4.12.0",
+		RepoVersion:   conf.LocalInstanceConfiguration.RepoVersion,
 		WorkDir:       workDir,
 		SingleNodeDir: filepath.Join(workDir, "single-node"),
 	}, nil
