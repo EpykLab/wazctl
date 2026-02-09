@@ -33,7 +33,7 @@ import (
 // authCmd represents the auth command
 var authCmd = &cobra.Command{
 	Use:   "auth",
-	Short: "test the ability of wazctl to authenticate again the specified wazuh endpoint",
+	Short: "test the ability of wazctl to authenticate against the specified Wazuh endpoint",
 	Run: func(cmd *cobra.Command, args []string) {
 
 		conf, err := config.New()

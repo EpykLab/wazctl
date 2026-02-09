@@ -2,7 +2,6 @@ package docker
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -20,12 +19,17 @@ type WazuhDockerManager struct {
 	SingleNodeDir string // Path to the single-node directory
 }
 
+// DefaultRepoVersion is used when no config file exists or local.repoVersion is not set.
+const DefaultRepoVersion = "v4.12.0"
+
 // NewWazuhDockerManager initializes a new WazuhDockerManager.
+// Config is optional: if no .wazctl.yaml exists, defaults are used (e.g. RepoVersion).
 func NewWazuhDockerManager() (*WazuhDockerManager, error) {
-	// Use a directory in the user's home for persistence
-	conf, err := config.New()
-	if err != nil {
-		log.Fatal("Error processing config file", err)
+	repoVersion := DefaultRepoVersion
+	if conf, err := config.LoadOptional(); err != nil {
+		return nil, fmt.Errorf("loading config: %w", err)
+	} else if conf != nil && conf.LocalInstanceConfiguration.RepoVersion != "" {
+		repoVersion = conf.LocalInstanceConfiguration.RepoVersion
 	}
 
 	home, err := os.UserHomeDir()
@@ -34,9 +38,8 @@ func NewWazuhDockerManager() (*WazuhDockerManager, error) {
 	}
 	workDir := filepath.Join(home, ".wazuh-docker")
 	return &WazuhDockerManager{
-		RepoURL: "https://github.com/wazuh/wazuh-docker.git",
-		// TODO: this should be configurable in the conf file
-		RepoVersion:   conf.LocalInstanceConfiguration.RepoVersion,
+		RepoURL:       "https://github.com/wazuh/wazuh-docker.git",
+		RepoVersion:   repoVersion,
 		WorkDir:       workDir,
 		SingleNodeDir: filepath.Join(workDir, "single-node"),
 	}, nil

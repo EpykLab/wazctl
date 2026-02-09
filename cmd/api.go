@@ -28,7 +28,7 @@ import (
 // apiCmd represents the api command
 var apiCmd = &cobra.Command{
 	Use:   "api",
-	Short: "Collections for of commands for working with the Wazuh API",
+	Short: "Collection of commands for working with the Wazuh API",
 }
 
 func init() {

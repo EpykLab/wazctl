@@ -28,7 +28,7 @@ import (
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "create a new rule file with specified name",
+	Short: "scaffold config or rule test files",
 	Run: func(cmd *cobra.Command, args []string) {
 	},
 }

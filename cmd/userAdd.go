@@ -49,7 +49,7 @@ var useraddCmd = &cobra.Command{
 			}))
 		case "indexer":
 			if role == "" {
-				fmt.Printf("no role provided. user the [-r --role] flag to define role new user should have")
+				fmt.Printf("no role provided. use the [-r --role] flag to define the role the new user should have")
 				os.Exit(1)
 			}
 
@@ -65,7 +65,7 @@ var useraddCmd = &cobra.Command{
 				},
 			}))
 		default:
-			fmt.Print("component option not recognized. Must of one of [wazuh, indexer]")
+			fmt.Print("component option not recognized. Must be one of [wazuh, indexer]")
 			os.Exit(1)
 		}
 	},

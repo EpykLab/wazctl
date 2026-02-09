@@ -60,6 +60,41 @@ func New() (*configurations.WazuhCtlConfig, error) {
 	return nil, fmt.Errorf("no valid config file found in locations: %v", configLocs)
 }
 
+// LoadOptional loads config from the default locations if present.
+// If no config file is found, it returns (nil, nil).
+// If a file exists but parsing fails, it returns (nil, err).
+// Use this when config is optional (e.g. localenv docker) and callers can fall back to defaults.
+func LoadOptional() (*configurations.WazuhCtlConfig, error) {
+	var config configurations.WazuhCtlConfig
+
+	for _, loc := range configLocs {
+		path, err := expandHomeDir(loc)
+		if err != nil {
+			log.Printf("Failed to expand path %s: %v", loc, err)
+			continue
+		}
+
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			continue
+		}
+
+		content, err := files.ReadFileFromSpecifiedPath(path)
+		if err != nil {
+			log.Printf("Failed to read config file at %s: %v", path, err)
+			continue
+		}
+
+		if err := yaml.Unmarshal(content, &config); err != nil {
+			log.Printf("Failed to unmarshal config file at %s: %v", path, err)
+			continue
+		}
+
+		return &config, nil
+	}
+
+	return nil, nil
+}
+
 // expandHomeDir replaces ~ with the user's home directory in the path.
 func expandHomeDir(path string) (string, error) {
 	if path[:2] != "~/" {
